@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,6 +42,18 @@ class DummyCLR implements CommandLineRunner {
         Stream.of("Spencer", "Mark", "Stefan", "Maria", "Arnaud", "Antonio")
                 .forEach(n -> reservationRepository.save(new Reservation(n)));
         reservationRepository.findAll().forEach(System.out::println);
+    }
+}
+
+@RestController
+@RefreshScope
+class MessageRestController {
+    @Value("${message}")
+    private String msg;
+
+    @RequestMapping("/message")
+    String read() {
+        return this.msg;
     }
 }
 
